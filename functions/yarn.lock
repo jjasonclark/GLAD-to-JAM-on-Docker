@@ -786,11 +786,15 @@ graphql-anywhere@^3.0.1:
   version "3.1.0"
   resolved "https://registry.yarnpkg.com/graphql-anywhere/-/graphql-anywhere-3.1.0.tgz#3ea0d8e8646b5cee68035016a9a7557c15c21e96"
 
+graphql-iso-date@^3.2.0:
+  version "3.2.0"
+  resolved "https://registry.yarnpkg.com/graphql-iso-date/-/graphql-iso-date-3.2.0.tgz#21f9352d165e624599ec4ea249e806966197f1dc"
+
 graphql-tag@^2.0.0, graphql-tag@^2.4.0:
   version "2.4.2"
   resolved "https://registry.yarnpkg.com/graphql-tag/-/graphql-tag-2.4.2.tgz#6a63297d8522d03a2b72d26f1b239aab343840cd"
 
-graphql@^0.10.0, graphql@^0.10.1:
+graphql@^0.10.0, graphql@^0.10.1, graphql@^0.10.3:
   version "0.10.3"
   resolved "https://registry.yarnpkg.com/graphql/-/graphql-0.10.3.tgz#c313afd5518e673351bee18fb63e2a0e487407ab"
   dependencies:
@@ -1030,7 +1034,7 @@ js-tokens@^3.0.0:
   version "3.0.2"
   resolved "https://registry.yarnpkg.com/js-tokens/-/js-tokens-3.0.2.tgz#9866df395102130e38f7f996bceb65443209c25b"
 
-js-yaml@^3.6.1, js-yaml@^3.8.3, js-yaml@^3.8.4:
+js-yaml@^3.6.1, js-yaml@^3.8.3, js-yaml@^3.9.0:
   version "3.9.0"
   resolved "https://registry.yarnpkg.com/js-yaml/-/js-yaml-3.9.0.tgz#4ffbbf25c2ac963b8299dc74da7e3740de1c18ce"
   dependencies:

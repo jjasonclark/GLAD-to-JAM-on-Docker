@@ -42,3 +42,16 @@ functions:
       - http:
           path: logout
           method: post
+
+  graphql_get:
+    handler: src/graphql.get
+    events:
+      - http:
+          path: graphql
+          method: get
+  graphql_post:
+    handler: src/graphql.post
+    events:
+      - http:
+          path: graphql
+          method: post

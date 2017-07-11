@@ -1,9 +1,25 @@
 version: '3.0'
 volumes:
+  node_modules_frontend:
   node_modules_functions:
   dynamodb:
 
 services:
+  app:
+    image: node:6.10-alpine
+    command: yarn start
+    working_dir: '/app/frontend'
+    environment:
+      HOST: '0.0.0.0'
+      PORT: '8080'
+    volumes:
+      - './:/app/'
+      - node_modules_frontend:/app/frontend/node_modules/
+    ports:
+      - '8080:8080'
+    depends_on:
+      - server
+
   server:
     image: node:6.10-alpine
     command: yarn run serverless -- offline -s dev -o 0.0.0.0 -P 3000 --noEnvironment

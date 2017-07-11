@@ -1,0 +1,9 @@
+FROM openjdk:8-jre
+
+ADD https://s3-us-west-2.amazonaws.com/dynamodb-local/dynamodb_local_latest.tar.gz /dynamodb_local_latest.tar.gz
+RUN mkdir -p /db && \
+    tar xzf /dynamodb_local_latest.tar.gz -C /db && \
+    rm /dynamodb_local_latest.tar.gz
+
+WORKDIR /db
+CMD java -Djava.library.path=./DynamoDBLocal_lib -jar DynamoDBLocal.jar -sharedDb

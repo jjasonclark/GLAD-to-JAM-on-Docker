@@ -1,0 +1,27 @@
+version: '3.0'
+volumes:
+  node_modules_functions:
+  dynamodb:
+
+services:
+  server:
+    image: node:6.10-alpine
+    command: yarn run serverless -- offline -s dev -o 0.0.0.0 -P 3000 --noEnvironment
+    working_dir: '/app/functions'
+    volumes:
+      - './:/app/'
+      - node_modules_functions:/app/functions/node_modules/
+    ports:
+      - '3000:3000'
+    depends_on:
+      - dynamodb
+
+  dynamodb:
+    build:
+      context: docker
+      dockerfile: Dockerfile.dynamodb
+    command: java -Djava.library.path=./DynamoDBLocal_lib -jar DynamoDBLocal.jar -dbPath /dynamodb
+    volumes:
+      - dynamodb:/dynamodb
+    ports:
+      - '8000:8000'

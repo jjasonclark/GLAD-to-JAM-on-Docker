@@ -30,3 +30,15 @@ functions:
       - http:
           path: signup
           method: post
+  login:
+    handler: src/authentication.login
+    events:
+      - http:
+          path: login
+          method: post
+  logout:
+    handler: src/authentication.logout
+    events:
+      - http:
+          path: logout
+          method: post

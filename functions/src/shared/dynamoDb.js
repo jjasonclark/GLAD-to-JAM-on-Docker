@@ -12,6 +12,10 @@ const dbSettings = {
 
 const dynamoDb = new AWS.DynamoDB(dbSettings);
 const docClient = new AWS.DynamoDB.DocumentClient({ service: dynamoDb });
+const docGet = promisify(docClient.get, docClient);
+const docUpdate = promisify(docClient.update, docClient);
 const docPut = promisify(docClient.put, docClient);
 
+module.exports.docGet = docGet;
+module.exports.docUpdate = docUpdate;
 module.exports.docPut = docPut;

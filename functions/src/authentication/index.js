@@ -2,12 +2,13 @@
 
 const bcrypt = require('bcryptjs');
 const { daysFromNow } = require('../shared/dates');
-const { isBlank } = require('../shared/utils');
+const { dig, isBlank } = require('../shared/utils');
 const { createUserJWT } = require('../shared/jwt');
-const { createUser } = require('../lib/users');
+const { getUser, updateLastSignOn, createUser  } = require('../lib/users');
 
 const domain = 'localhost';
 const rootUrl = `http://${domain}:8080`;
+const loginUrl = `${rootUrl}/login`;
 const signUpUrl = `${rootUrl}/signup`;
 const loginDays = 14;
 const saltLength = 3;
@@ -41,6 +42,40 @@ function returnCreatedJWT(user, callback) {
     .then(cookie => createRedirect(rootUrl, cookie))
     .then(result => callback(null, result));
 }
+
+module.exports.login = (event, context, callback) => {
+  const { username, password } = JSON.parse(event.body);
+  if (isBlank(username)) {
+    callback(null, createRedirect(loginUrl, createErrorCookie('Username is blank', domain)));
+    return;
+  }
+
+  getUser(username)
+    .then(user => {
+      if (user == null || user.username !== username) {
+        return Promise.reject('User not found');
+      }
+      return user;
+    })
+    .then(user => {
+      return bcrypt.compare(password, dig(user, 'password')).then(isCorrect => {
+        if (!isCorrect) {
+          return Promise.reject('Incorrect password');
+        }
+        return user;
+      });
+    })
+    .then(updateLastSignOn)
+    .then(user => returnCreatedJWT(user, callback))
+    .catch(error => {
+      console.error(error);
+      callback(null, createRedirect(loginUrl, createErrorCookie(error, domain)));
+    });
+};
+
+module.exports.logout = (event, context, callback) => {
+  callback(null, createRedirect(rootUrl, createCookie('', new Date(), domain)));
+};
 
 module.exports.signup = (event, context, callback) => {
   const { username, password, passwordConfirmation } = JSON.parse(event.body);

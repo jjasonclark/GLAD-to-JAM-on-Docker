@@ -1,8 +1,15 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import Landing from './landing';
+import Main from './main';
 
-const Home = () => {
+const Home = ({ loggedIn }) => {
+  if (loggedIn) {
+    return <Main />;
+  }
   return <Landing />;
 };
 
-export default Home;
+const mapStateToProps = ({ user: { loggedIn } }) => ({ loggedIn });
+
+export default connect(mapStateToProps)(Home);

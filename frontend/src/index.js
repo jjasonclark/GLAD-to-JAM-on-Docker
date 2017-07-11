@@ -5,10 +5,12 @@ import App from './pages';
 import createStore from './store';
 import registerServiceWorker from './registerServiceWorker';
 import { Provider } from 'react-redux';
+import { currentUserFetch } from './ducks/user';
 import 'reset.css';
 import './index.css';
 
 const store = createStore();
+store.dispatch(currentUserFetch()).catch(()=>null)
 
 ReactDOM.render(
   <Provider store={store}>

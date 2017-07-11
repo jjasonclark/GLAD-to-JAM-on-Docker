@@ -1,3 +1,12 @@
+const postOptions = {
+  method: 'POST',
+  credentials: 'same-origin',
+  headers: {
+    'Content-Type': 'application/json',
+    Accept: 'application/json',
+  },
+};
+
 function extractCookie(cookie, name) {
   const cookieMap = cookieToHash(cookie);
   return cookieMap[name];
@@ -20,36 +29,30 @@ function cookieToHash(cookie) {
 }
 
 export const postLogin = (loginData, history) =>
-  fetch('/login', {
-    method: 'POST',
-    credentials: 'same-origin',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(loginData),
-  })
+  fetch('/login', { ...postOptions, body: JSON.stringify(loginData) })
     .then(handleResponse)
     .then(() => history.push('/'));
 
 export const postSignup = (signupData, history) =>
   fetch('/signup', {
-    method: 'POST',
-    credentials: 'same-origin',
-    headers: {
-      'Content-Type': 'application/json',
-    },
+    ...postOptions,
     body: JSON.stringify(signupData),
   })
     .then(handleResponse)
     .then(() => history.push('/'));
 
 export const postLogout = history =>
-  fetch('/logout', {
-    method: 'POST',
-    credentials: 'same-origin',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  })
-    .then(handleResponse)
-    .then(() => history.push('/'));
+  fetch('/logout', postOptions).then(handleResponse).then(() => history.push('/'));
+
+export const fetchSelf = () =>
+  fetch('/graphql', {
+    ...postOptions,
+    body: JSON.stringify({
+      query: 'query self { me { username } }',
+    }),
+  }).then(response => {
+    if (response.status !== 200) {
+      return Promise.reject({ error: 'failed fetch' });
+    }
+    return response.json();
+  });

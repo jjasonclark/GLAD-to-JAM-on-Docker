@@ -1,10 +1,12 @@
 import { FULFILLED, REJECTED } from 'redux-promise-middleware';
 import typeToReducer from 'type-to-reducer';
-import { postLogin, postLogout, postSignup } from '../actions/user';
+import { postLogin, postLogout, postSignup, fetchSelf } from '../actions/user';
+import { dig } from '../lib/utils';
 
 export const SIGNUP = 'USER/SIGNUP';
 export const LOGIN = 'USER/LOGIN';
 export const LOGOUT = 'USER/LOGOUT';
+export const FETCH_SELF = 'USER/FETCH_SELF';
 
 export const signupUser = (signupData, history) => ({
   type: SIGNUP,
@@ -27,8 +29,12 @@ export const logoutUser = history => ({
   payload: postLogout(history),
 });
 
+export const currentUserFetch = () => ({
+  type: FETCH_SELF,
+  payload: fetchSelf(),
+});
+
 const INITIAL_STATE = {
-  name: '',
   username: '',
   loggedIn: false,
   error: '',
@@ -58,6 +64,11 @@ const logoutSuccess = (state, action) => {
   return { ...state, ...INITIAL_STATE };
 };
 
+const fetchSelfSuccess = (state, action) => {
+  console.log('fetchSelfSuccess', action);
+  return { ...state, loggedIn: true, username: dig(action, 'payload', 'data', 'me', 'username') };
+};
+
 const actionHandlers = {
   [LOGIN]: {
     [FULFILLED]: loginSuccess,
@@ -69,6 +80,9 @@ const actionHandlers = {
   },
   [LOGOUT]: {
     [FULFILLED]: logoutSuccess,
+  },
+  [FETCH_SELF]: {
+    [FULFILLED]: fetchSelfSuccess,
   },
 };
 

@@ -4,6 +4,7 @@ const bcrypt = require('bcryptjs');
 const { daysFromNow } = require('../shared/dates');
 const { dig, isBlank } = require('../shared/utils');
 const { createUserJWT } = require('../shared/jwt');
+const { validateTypeHeaders } = require('../shared/headers');
 const { getUser, updateLastSignOn, createUser  } = require('../lib/users');
 
 const domain = 'localhost';
@@ -13,6 +14,15 @@ const signUpUrl = `${rootUrl}/signup`;
 const loginDays = 14;
 const saltLength = 3;
 const secretCode = 'secret';
+const notAcceptableResponse = {
+  statusCode: 406,
+  headers: {
+    'Cache-Control': 'no-cache',
+    'Content-Type': 'plain/text',
+    'Content-Length': 0,
+  },
+  body: null,
+};
 
 function createCookie(jwt, expire, domain) {
   return `JWT=${encodeURIComponent(jwt)}; Domain=${domain}; Expires=${expire.toGMTString()}; HttpOnly`;
@@ -43,7 +53,16 @@ function returnCreatedJWT(user, callback) {
     .then(result => callback(null, result));
 }
 
+function hasValidContentTypes(event) {
+  return validateTypeHeaders(event, ['Content-Type'], 'application/json');
+}
+
 module.exports.login = (event, context, callback) => {
+  if (!hasValidContentTypes(event)) {
+    callback(null, notAcceptableResponse);
+    return;
+  }
+
   const { username, password } = JSON.parse(event.body);
   if (isBlank(username)) {
     callback(null, createRedirect(loginUrl, createErrorCookie('Username is blank', domain)));
@@ -78,6 +97,11 @@ module.exports.logout = (event, context, callback) => {
 };
 
 module.exports.signup = (event, context, callback) => {
+  if (!hasValidContentTypes(event)) {
+    callback(null, notAcceptableResponse);
+    return;
+  }
+
   const { username, password, passwordConfirmation } = JSON.parse(event.body);
 
   if (isBlank(username)) {
